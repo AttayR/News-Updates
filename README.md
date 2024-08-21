@@ -1,2 +1,16 @@
-# News-Updates
-News Updates is a Flutter app that provides users with the latest news from various sources. It features a clean and intuitive interface for browsing headlines, reading articles, and staying informed about current events. The app supports real-time updates, personalized news feeds, and a smooth user experience.
+# news_updates
+
+A new Flutter project.
+
+## Getting Started
+
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
