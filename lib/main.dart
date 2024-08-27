@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:news_updates/pages/home.dart';
 import 'package:news_updates/pages/landing_page.dart';
 
 void main() {
