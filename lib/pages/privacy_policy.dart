@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class ArticleView extends StatefulWidget {
-  String blogUrl;
-  ArticleView({required this.blogUrl});
-  @override
-  State<ArticleView> createState() => _ArticleViewState();
-}
-
-class _ArticleViewState extends State<ArticleView> {
+class PrivacyPolicyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +10,7 @@ class _ArticleViewState extends State<ArticleView> {
           text: TextSpan(
             children: [
               TextSpan(
-                text: "Trending",
+                text: "Privacy",
                 style: TextStyle(
                   color: Colors.white, // White color for "World"
                   fontWeight: FontWeight.bold,
@@ -25,7 +18,7 @@ class _ArticleViewState extends State<ArticleView> {
                 ),
               ),
               TextSpan(
-                text: "News",
+                text: "Policy",
                 style: TextStyle(
                   color: Colors.orange, // Orange color for "Pulse"
                   fontWeight: FontWeight.bold,
@@ -41,13 +34,9 @@ class _ArticleViewState extends State<ArticleView> {
               Colors.white, // This will change the color of the icons to white
         ),
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: WebView(
-          initialUrl: widget.blogUrl,
-          javascriptMode: JavascriptMode.unrestricted,
-        ),
+      body: WebView(
+        initialUrl: 'https://codeteck.com/world-pulse/',
+        javascriptMode: JavascriptMode.unrestricted,
       ),
     );
   }
