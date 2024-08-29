@@ -6,6 +6,7 @@ import 'package:news_updates/models/category_models.dart';
 import 'package:news_updates/models/slider_modal.dart';
 import 'package:news_updates/pages/article_view.dart';
 import 'package:news_updates/pages/landing_page.dart';
+import 'package:news_updates/pages/news_page.dart';
 import 'package:news_updates/pages/privacy_policy.dart';
 import 'package:news_updates/services/data.dart';
 import 'package:news_updates/services/news.dart';
@@ -132,6 +133,22 @@ class _HomeState extends State<Home> {
             ListTile(
               leading: Icon(Icons.privacy_tip),
               title: Text(
+                "Articles",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Colors.orange,
+                    ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NewsPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.privacy_tip),
+              title: Text(
                 "Privacy Policy",
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Colors.orange,
@@ -145,6 +162,7 @@ class _HomeState extends State<Home> {
                 );
               },
             ),
+
           ],
         ),
       ),
