@@ -6,6 +6,7 @@ import 'package:news_updates/models/category_models.dart';
 import 'package:news_updates/models/slider_modal.dart';
 import 'package:news_updates/pages/article_view.dart';
 import 'package:news_updates/pages/landing_page.dart';
+import 'package:news_updates/pages/news_page.dart';
 import 'package:news_updates/pages/privacy_policy.dart';
 import 'package:news_updates/services/data.dart';
 import 'package:news_updates/services/news.dart';
@@ -40,8 +41,11 @@ class _HomeState extends State<Home> {
   Future<void> getNews() async {
     News newsclass = News();
     await newsclass.getNews();
+    print("Fetched articles outside: ${newsclass.news}"); // Debug print
+
     setState(() {
       articles = newsclass.news;
+      print('Fetched articles: $articles'); // Debugging line
       _loading = false;
     });
   }
@@ -87,7 +91,9 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-        backgroundColor: Color(0xFF003366),
+        backgroundColor: const Color.fromARGB(
+            255, 80, 2, 2), // You can change this color to be more colorful
+
         iconTheme: IconThemeData(
           color:
               Colors.white, // This will change the color of the icons to white
@@ -99,63 +105,54 @@ class _HomeState extends State<Home> {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Color(0xFF003366),
+                color: const Color.fromARGB(255, 80, 2, 2),
               ),
               child: Text(
                 'Menu',
-                style: TextStyle(
-                  color: Colors.orange,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: Colors.orange,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ),
             ListTile(
-              hoverColor: Colors.amber,
               leading: Icon(Icons.home),
-              title: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: " Home",
-                      style: TextStyle(
-                        color: Colors.orange,
-                        fontSize: 20.0,
-                      ),
+              title: Text(
+                "Home",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Colors.orange,
                     ),
-                  ],
-                ),
               ),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => LandingPage()),
+                  MaterialPageRoute(builder: (context) => LandingPage()),
                 );
               },
             ),
             ListTile(
               leading: Icon(Icons.privacy_tip),
-              title: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Privacy",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20.0,
-                      ),
+              title: Text(
+                "Articles",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Colors.orange,
                     ),
-                    TextSpan(
-                      text: " Policy",
-                      style: TextStyle(
-                        color: Colors.orange,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.0,
-                      ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NewsPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.privacy_tip),
+              title: Text(
+                "Privacy Policy",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Colors.orange,
                     ),
-                  ],
-                ),
               ),
               onTap: () {
                 Navigator.push(
@@ -165,14 +162,14 @@ class _HomeState extends State<Home> {
                 );
               },
             ),
+
           ],
         ),
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator())
           : Container(
-              color: Color.fromARGB(
-                  255, 29, 15, 34), // Light gray background color
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,11 +181,14 @@ class _HomeState extends State<Home> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Top Trending",
-                            style: TextStyle(
-                                color: const Color.fromARGB(255, 255, 153, 0),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18.0),
+                            "Top Trendings!",
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall
+                                ?.copyWith(
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 25),
                           ),
                         ],
                       ),
@@ -222,33 +222,38 @@ class _HomeState extends State<Home> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Headlines",
-                            style: TextStyle(
-                                color: const Color.fromARGB(255, 255, 153, 0),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18.0),
+                            "Headlines!",
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall
+                                ?.copyWith(
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 25,
+                                ),
                           ),
                         ],
                       ),
                     ),
                     SizedBox(height: 10.0),
                     Container(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: ClampingScrollPhysics(),
-                        itemCount: articles.length,
-                        itemBuilder: (context, index) {
-                          return BlogTile(
-                            author: articles[index].author ?? 'Unknown',
-                            url: articles[index].url ?? '',
-                            imageUrl: articles[index].urlToImage ?? '',
-                            title: articles[index].title ?? 'No Title',
-                            desc:
-                                articles[index].description ?? 'No Description',
-                          );
-                        },
-                      ),
-                    ),
+                      child: articles.isEmpty
+                          ? Center(child: Text("No headlines available"))
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              physics: ClampingScrollPhysics(),
+                              itemCount: articles.length,
+                              itemBuilder: (context, index) {
+                                return BlogTile(
+                                  imageUrl: articles[index].urlToImage ?? '',
+                                  title: articles[index].title ?? '',
+                                  desc: articles[index].description ?? '',
+                                  url: articles[index].url ?? '',
+                                  author: articles[index].author ?? 'Anonymous',
+                                );
+                              },
+                            ),
+                    )
                   ],
                 ),
               ),
@@ -302,6 +307,10 @@ class _HomeState extends State<Home> {
         count: 5,
         effect: ExpandingDotsEffect(activeDotColor: Colors.orange),
       );
+}
+
+extension on TextTheme {
+  get headline6 => null;
 }
 
 class CategoryTiles extends StatelessWidget {
@@ -374,18 +383,29 @@ class BlogTile extends StatelessWidget {
         );
       },
       child: Container(
-        color: Color(0xFF003366),
-        margin: EdgeInsetsDirectional.only(bottom: 10),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: Material(
-            elevation: 3.0,
-            borderRadius: BorderRadius.circular(10),
+        margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Material(
+          elevation: 5.0,
+          borderRadius: BorderRadius.circular(15),
+          shadowColor: Colors.black.withOpacity(0.5),
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 80, 2, 2),
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  offset: Offset(0, 5),
+                  blurRadius: 10.0,
+                ),
+              ],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
                   child: CachedNetworkImage(
                     imageUrl: imageUrl,
                     placeholder: (context, url) => CircularProgressIndicator(),
@@ -403,9 +423,9 @@ class BlogTile extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
+                      fontSize: 18.0,
                     ),
                   ),
                 ),
@@ -417,7 +437,7 @@ class BlogTile extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: Colors.black54,
+                      color: Colors.grey[600],
                       fontSize: 14.0,
                     ),
                   ),
@@ -426,11 +446,11 @@ class BlogTile extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(
-                    'Author: $author',
+                    'By $author',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 12.0,
+                      color: Colors.grey[600],
+                      fontSize: 14.0,
                     ),
                   ),
                 ),
