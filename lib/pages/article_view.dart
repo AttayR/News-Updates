@@ -35,7 +35,7 @@ class _ArticleViewState extends State<ArticleView> {
             ],
           ),
         ),
-        backgroundColor: Color(0xFF003366), // Dark Blue background
+        backgroundColor: const Color.fromARGB(255, 80, 2, 2),
         iconTheme: IconThemeData(
           color:
               Colors.white, // This will change the color of the icons to white

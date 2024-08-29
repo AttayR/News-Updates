@@ -1,11 +1,15 @@
+
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Fetch the current theme data
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
+     appBar: AppBar(
         title: RichText(
           text: TextSpan(
             children: [
@@ -28,7 +32,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
             ],
           ),
         ),
-        backgroundColor: Color(0xFF003366), // Dark Blue background
+        backgroundColor: const Color.fromARGB(255, 80, 2, 2),
         iconTheme: IconThemeData(
           color:
               Colors.white, // This will change the color of the icons to white
@@ -41,3 +45,4 @@ class PrivacyPolicyScreen extends StatelessWidget {
     );
   }
 }
+

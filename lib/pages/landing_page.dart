@@ -18,7 +18,7 @@ class _LandingPageState extends State<LandingPage> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("images/building4.jpg"),
+                image: AssetImage("images/building7.jpg"),
                 fit: BoxFit.cover,
               ),
             ),
@@ -26,7 +26,7 @@ class _LandingPageState extends State<LandingPage> {
           // Content on top of the background image
           Container(
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.5), // Adding a semi-transparent overlay for better readability
+              color: Colors.black.withOpacity(0.6), // Adding a semi-transparent overlay for better readability
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end, // Align content to the bottom
@@ -75,7 +75,7 @@ class _LandingPageState extends State<LandingPage> {
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
-                          color: Colors.orange,
+                          color:const Color.fromARGB(255, 80, 2, 2),
                         ),
                         child: const Center(
                           child: Text(
