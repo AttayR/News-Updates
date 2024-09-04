@@ -7,4 +7,6 @@ class sliderModal {
   String? content;
 
   sliderModal({this.author,this.content,this.description,this.title,this.url,this.urlToImage});
+
+  get imageUrl => null;
 }

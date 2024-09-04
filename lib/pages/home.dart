@@ -1,18 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:news_updates/models/article_model.dart';
 import 'package:news_updates/models/category_models.dart';
 import 'package:news_updates/models/slider_modal.dart';
+import 'package:news_updates/pages/article_submission_screen.dart';
 import 'package:news_updates/pages/article_view.dart';
 import 'package:news_updates/pages/category_news.dart';
-import 'package:news_updates/pages/landing_page.dart';
 import 'package:news_updates/pages/news_page.dart';
 import 'package:news_updates/pages/offline_news_screen.dart';
 import 'package:news_updates/pages/privacy_policy.dart';
+import 'package:news_updates/pages/quiz_screen.dart';
+import 'package:news_updates/pages/submitted_article_screen.dart';
 import 'package:news_updates/services/data.dart';
 import 'package:news_updates/services/news.dart';
 import 'package:news_updates/services/slider_data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:intl/intl.dart';
 
@@ -27,17 +29,40 @@ class _HomeState extends State<Home> {
   List<CategoryModels> categories = [];
   List<sliderModal> sliders = [];
   List<ArticleModel> articles = [];
+  Set<String> _bookmarkedArticleIds = Set<String>();
   bool _loading = true;
   int activeIndex = 0;
   late String currentTime;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    _loadBookmarks();
     categories = getCategories();
     getSlider();
     getNews();
     _updateTime();
+  }
+
+  Future<void> _loadBookmarks() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _bookmarkedArticleIds =
+          prefs.getStringList('bookmarkedArticles')?.toSet() ?? Set<String>();
+    });
+  }
+
+  Future<void> _toggleBookmark(ArticleModel article) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      if (_bookmarkedArticleIds.contains(article.id)) {
+        _bookmarkedArticleIds.remove(article.id);
+      } else {
+        _bookmarkedArticleIds.add(article.id as String);
+      }
+      prefs.setStringList('bookmarkedArticles', _bookmarkedArticleIds.toList());
+    });
   }
 
   Future<void> getNews() async {
@@ -125,38 +150,43 @@ class _HomeState extends State<Home> {
     );
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => QuizScreen()),
+        );
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ArticleSubmissionScreen()),
+        );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SubmittedArticlesScreen()),
+        );
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: "World",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                ),
-              ),
-              TextSpan(
-                text: " Pulse",
-                style: TextStyle(
-                  color: Colors.orange,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                ),
-              ),
-            ],
-          ),
-        ),
-        backgroundColor: const Color.fromARGB(
-            255, 80, 2, 2), // You can change this color to be more colorful
-
+        backgroundColor:
+            const Color.fromARGB(255, 80, 2, 2), // Background color
         iconTheme: IconThemeData(
-          color:
-              Colors.white, // This will change the color of the icons to white
+          color: Colors.white, // Color of the icons
         ),
         actions: [
           IconButton(
@@ -169,6 +199,31 @@ class _HomeState extends State<Home> {
             },
           ),
         ],
+        title: Align(
+          alignment: Alignment.center,
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: "World",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                  ),
+                ),
+                TextSpan(
+                  text: " Pulse",
+                  style: TextStyle(
+                    color: Colors.orange,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
       drawer: Drawer(
         child: ListView(
@@ -187,24 +242,9 @@ class _HomeState extends State<Home> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home),
+              leading: Icon(Icons.wrong_location_rounded),
               title: Text(
-                "Home",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.orange,
-                    ),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LandingPage()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.article),
-              title: Text(
-                "Local",
+                "Global",
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Colors.orange,
                     ),
@@ -216,7 +256,38 @@ class _HomeState extends State<Home> {
                 );
               },
             ),
-            
+            ListTile(
+              leading: Icon(Icons.subscriptions),
+              title: Text(
+                "Submitted Articles",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Colors.orange,
+                    ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SubmittedArticlesScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.article_rounded),
+              title: Text(
+                "Write Articles",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Colors.orange,
+                    ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ArticleSubmissionScreen()),
+                );
+              },
+            ),
             ListTile(
               leading: Icon(Icons.offline_pin),
               title: Text(
@@ -251,6 +322,35 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        selectedItemColor: Colors.orange,
+        unselectedItemColor: Colors.white,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+            backgroundColor: Color.fromARGB(255, 80, 2, 2),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.quiz),
+            label: 'Quiz',
+            backgroundColor: Color.fromARGB(255, 80, 2, 2),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.article),
+            label: 'Write Article',
+            backgroundColor: Color.fromARGB(255, 80, 2, 2),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.subscriptions),
+            label: 'Submitted Article',
+            backgroundColor: Color.fromARGB(255, 80, 2, 2),
+          ),
+        ],
+      ),
       body: _loading
           ? Center(child: CircularProgressIndicator())
           : Container(
@@ -260,13 +360,24 @@ class _HomeState extends State<Home> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 10.0),
-                    Text(
-                      "Select Category!",
-                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            color: Colors.orange,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Select Category!",
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall
+                                ?.copyWith(
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
                           ),
+                        ],
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -295,35 +406,6 @@ class _HomeState extends State<Home> {
                             categoryName:
                                 categories[index].categoryName ?? 'Unknown',
                           );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 30.0),
-                    Text(
-                      "Breaking News!",
-                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            color: Colors.orange,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                    ),
-                    SizedBox(height: 30.0),
-                    CarouselSlider.builder(
-                      itemCount: sliders.length,
-                      itemBuilder: (context, index, realIndex) {
-                        String? image = sliders[index].urlToImage;
-                        String? title = sliders[index].title;
-                        return buildImage(image ?? '', index, title ?? '');
-                      },
-                      options: CarouselOptions(
-                        height: 200,
-                        autoPlay: true,
-                        enlargeCenterPage: true,
-                        enlargeStrategy: CenterPageEnlargeStrategy.height,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            activeIndex = index;
-                          });
                         },
                       ),
                     ),
@@ -358,6 +440,9 @@ class _HomeState extends State<Home> {
                               physics: ClampingScrollPhysics(),
                               itemCount: articles.length,
                               itemBuilder: (context, index) {
+                                final article = articles[index];
+                                final isBookmarked =
+                                    _bookmarkedArticleIds.contains(article.id);
                                 return BlogTile(
                                   imageUrl: articles[index].urlToImage ?? '',
                                   title: articles[index].title ?? '',
@@ -367,7 +452,9 @@ class _HomeState extends State<Home> {
                                   publishedAt:
                                       articles[index].publishedAt ?? '',
                                 );
+                                
                               },
+                              
                             ),
                     )
                   ],
@@ -389,7 +476,8 @@ class _HomeState extends State<Home> {
                 height: 250,
                 width: MediaQuery.of(context).size.width,
                 placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+                errorWidget: (context, url, error) =>
+                    Image.asset("/images/building4.jpg"),
               ),
             ),
             Container(
@@ -499,14 +587,7 @@ class BlogTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ArticleView(blogUrl: url),
-          ),
-        );
-      },
+      onTap: () {},
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Material(
@@ -559,7 +640,7 @@ class BlogTile extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     desc,
-                    maxLines: 2,
+                    maxLines: 6,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: Colors.grey[900],

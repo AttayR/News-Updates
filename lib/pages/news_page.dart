@@ -44,8 +44,8 @@ class NewsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // News Image
-              Image.network(
-                'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bmV3c3xlbnwwfHwwfHx8MA%3D%3D',
+              Image.asset(
+                "images/sports.jpg",
                 fit: BoxFit.cover,
               ),
               SizedBox(height: 16.0),

@@ -54,7 +54,6 @@ class _OfflineNewsScreenState extends State<OfflineNewsScreen> {
         
       ),
       body: Container(
-        color: Colors.white, // Set the background color to white
         child: FutureBuilder<List<ArticleModel>>(
           future: _offlineArticles,
           builder: (context, snapshot) {
@@ -72,6 +71,7 @@ class _OfflineNewsScreenState extends State<OfflineNewsScreen> {
                 itemBuilder: (context, index) {
                   final article = articles[index];
                   return Card(
+                    
                     elevation: 5,
                     margin: EdgeInsets.symmetric(vertical: 8.0),
                     child: ListTile(
